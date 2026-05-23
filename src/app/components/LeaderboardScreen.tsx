@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface LeaderboardRow {
   rank: number;
@@ -15,13 +15,32 @@ interface LeaderboardScreenProps {
 
 const PASSWORD = 'mln3se184190';
 
+const STORAGE_KEY = 'leaderboard_unlocked';
+
 export function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
   const [input, setInput] = useState('');
-  const [unlocked, setUnlocked] = useState(false);
+  const [unlocked, setUnlocked] = useState(() => localStorage.getItem(STORAGE_KEY) === '1');
   const [shake, setShake] = useState(false);
   const [rows, setRows] = useState<LeaderboardRow[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/leaderboard');
+      if (!res.ok) throw new Error();
+      setRows(await res.json());
+    } catch {
+      setError('Không thể tải dữ liệu. Vui lòng thử lại.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (unlocked) fetchData();
+  }, [unlocked]);
 
   const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,18 +50,8 @@ export function LeaderboardScreen({ onBack }: LeaderboardScreenProps) {
       setInput('');
       return;
     }
-
-    setLoading(true);
-    try {
-      const res = await fetch('/api/leaderboard');
-      if (!res.ok) throw new Error();
-      setRows(await res.json());
-      setUnlocked(true);
-    } catch {
-      setError('Không thể tải dữ liệu. Vui lòng thử lại.');
-    } finally {
-      setLoading(false);
-    }
+    localStorage.setItem(STORAGE_KEY, '1');
+    setUnlocked(true);
   };
 
   const formatDate = (iso: string) => {
