@@ -29,7 +29,9 @@ function loadSavedState(): SavedState | null {
     if (!raw) return null;
     const parsed = JSON.parse(raw) as SavedState;
     // Kiểm tra dữ liệu hợp lệ: phải có screen và questions đã được chọn
-    if (!parsed.screen || !Array.isArray(parsed.gameState?.questions) || parsed.gameState.questions.length === 0) {
+    if (!parsed.screen) return null;
+    // leaderboard không cần questions; các màn chơi khác thì cần
+    if (parsed.screen !== 'leaderboard' && (!Array.isArray(parsed.gameState?.questions) || parsed.gameState.questions.length === 0)) {
       return null;
     }
     return parsed;
