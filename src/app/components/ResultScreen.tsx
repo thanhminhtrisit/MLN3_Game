@@ -172,11 +172,14 @@ export function ResultScreen({ gameState, onRestart }: ResultScreenProps) {
                   <th className="text-center py-2 px-2" style={{ color: '#c8341e', fontWeight: 700 }}>Điểm</th>
                   <th className="text-center py-2 px-2" style={{ color: '#c8341e', fontWeight: 700 }}>Đúng</th>
                   <th className="text-center py-2 px-2" style={{ color: '#c8341e', fontWeight: 700 }}>Gợi ý</th>
+                  <th className="text-right py-2 px-2" style={{ color: '#c8341e', fontWeight: 700 }}>Thời gian</th>
                 </tr>
               </thead>
               <tbody>
                 {leaderboard.map((row, idx) => {
                   const isMe = row.player_name === playerName && Number(row.score) === finalScore;
+                  const d = new Date(row.played_at);
+                  const timeStr = d.toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                   return (
                     <tr key={idx}
                       style={{
@@ -198,6 +201,9 @@ export function ResultScreen({ gameState, onRestart }: ResultScreenProps) {
                       </td>
                       <td className="py-2 px-2 text-center" style={{ color: '#717182' }}>
                         {row.hints_used}💡
+                      </td>
+                      <td className="py-2 px-2 text-right" style={{ color: '#717182', fontSize: '0.8rem' }}>
+                        {timeStr}
                       </td>
                     </tr>
                   );
