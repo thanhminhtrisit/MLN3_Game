@@ -1,7 +1,6 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import pool, { dbReady } from './db';
+const { pool, dbReady } = require('./db');
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -9,7 +8,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { playerName, score, correctAnswers, hintsUsed } = req.body ?? {};
+  const { playerName, score, correctAnswers, hintsUsed } = req.body || {};
 
   if (!playerName || score === undefined || correctAnswers === undefined || hintsUsed === undefined) {
     return res.status(400).json({ error: 'Thiếu dữ liệu' });
@@ -23,7 +22,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       [String(playerName).slice(0, 100), Number(score), Number(correctAnswers), Number(hintsUsed)]
     );
     return res.status(200).json({ success: true });
-  } catch {
-    return res.status(500).json({ error: 'Database error' });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
   }
-}
+};

@@ -1,7 +1,6 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
-import pool, { dbReady } from './db';
+const { pool, dbReady } = require('./db');
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -12,20 +11,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     await dbReady;
     const result = await pool.query(`
-      SELECT
-        ROW_NUMBER() OVER (ORDER BY score DESC, played_at ASC) AS rank,
-        player_name,
-        score,
-        correct_answers,
-        hints_used,
-        played_at
+      SELECT player_name, score, correct_answers, hints_used, played_at
       FROM scores
       ORDER BY score DESC, played_at ASC
-      LIMIT 100
+      LIMIT 10
     `);
     return res.status(200).json(result.rows);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    return res.status(500).json({ error: message });
+    return res.status(500).json({ error: err.message });
   }
-}
+};
