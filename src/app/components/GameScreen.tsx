@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { GameState } from '../App';
-import { removeDiacritics } from '../data/questions';
 
 interface GameScreenProps {
   gameState: GameState;
@@ -56,10 +55,11 @@ export function GameScreen({ gameState, onCorrect, onWrong, onUseHint }: GameScr
     e.preventDefault();
     if (isShowingAnswer) return;
 
-    const normalized = removeDiacritics(userInput);
-    const correctNormalized = currentQuestion.normalizedAnswer;
+    const inputLower = userInput.trim().toLowerCase();
+    const isExactMatch = inputLower === currentQuestion.answer.toLowerCase();
+    const isNoAccentMatch = inputLower === currentQuestion.normalizedAnswer;
 
-    if (normalized === correctNormalized) {
+    if (isExactMatch || isNoAccentMatch) {
       setIsCorrect(true);
       setTimeout(onCorrect, 800);
     } else {
