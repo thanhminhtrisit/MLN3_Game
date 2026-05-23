@@ -2,9 +2,10 @@ import { useState } from 'react';
 
 interface WelcomeScreenProps {
   onStart: (name: string) => void;
+  onLeaderboard: () => void;
 }
 
-export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
+export function WelcomeScreen({ onStart, onLeaderboard }: WelcomeScreenProps) {
   const [name, setName] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -151,6 +152,27 @@ export function WelcomeScreen({ onStart }: WelcomeScreenProps) {
           onMouseLeave={(e) => e.currentTarget.style.transform = 'translate(0, 0)'}
         >
           ▶ BẮT ĐẦU CHƠI
+        </button>
+
+        {/* Leaderboard button */}
+        <button
+          type="button"
+          onClick={onLeaderboard}
+          className="w-full bg-transparent border-2 border-[#d4a82c] px-8 py-3"
+          style={{
+            fontFamily: '"Oswald", sans-serif',
+            fontWeight: 700,
+            fontSize: '1rem',
+            letterSpacing: '0.1em',
+            color: '#d4a82c',
+            textTransform: 'uppercase',
+            transition: 'transform 0.1s',
+          }}
+          onMouseDown={(e) => e.currentTarget.style.transform = 'translate(2px, 2px)'}
+          onMouseUp={(e) => e.currentTarget.style.transform = 'translate(0, 0)'}
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'translate(0, 0)'}
+        >
+          🏆 XEM BẢNG XẾP HẠNG
         </button>
       </div>
     </div>

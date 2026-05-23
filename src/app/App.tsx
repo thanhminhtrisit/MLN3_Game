@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { WelcomeScreen } from './components/WelcomeScreen';
 import { GameScreen } from './components/GameScreen';
 import { ResultScreen } from './components/ResultScreen';
+import { LeaderboardScreen } from './components/LeaderboardScreen';
 import { getRandomQuestions, Question } from './data/questions';
 
-type Screen = 'welcome' | 'game' | 'result';
+type Screen = 'welcome' | 'game' | 'result' | 'leaderboard';
 
 export interface GameState {
   playerName: string;
@@ -113,7 +114,7 @@ export default function App() {
       background: 'radial-gradient(circle at center, #2a0f10 0%, #1a0a0a 100%)',
       fontFamily: '"Be Vietnam Pro", sans-serif'
     }}>
-      {screen === 'welcome' && <WelcomeScreen onStart={startGame} />}
+      {screen === 'welcome' && <WelcomeScreen onStart={startGame} onLeaderboard={() => setScreen('leaderboard')} />}
       {screen === 'game' && (
         <GameScreen
           gameState={gameState}
@@ -127,6 +128,9 @@ export default function App() {
           gameState={gameState}
           onRestart={restartGame}
         />
+      )}
+      {screen === 'leaderboard' && (
+        <LeaderboardScreen onBack={() => setScreen('welcome')} />
       )}
     </div>
   );
